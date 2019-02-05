@@ -41,7 +41,7 @@ def checkfolder(folder):
                 finalHash = getSha256Hash(fileString)
                 print(finalHash)
 
-#checkfolder('testdir')
+checkfolder('testdir')
 
 def sqliteops():
     conn = sqlite3.connect('test.db')
@@ -61,3 +61,6 @@ def sqliteops():
     # Just be sure any changes have been committed or they will be lost.
     conn.close()
 sqliteops()
+
+
+#teswts
