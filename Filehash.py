@@ -41,7 +41,7 @@ class FileHash:
                     finalHash = self.getSha256Hash(fileString)
                     print(finalHash)
                     sqlops.sqlSignInsert(filename=name,filepath=filename,sign=finalHash,appId=1)
-
+#OOPS OBJECT
 file = FileHash()
 file.checkfolder('testdir')
 
