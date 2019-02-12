@@ -3,7 +3,7 @@ import hashlib
 # Python program to find SHA256 hexadecimal hash string of a file
 import hashlib
 import os
-import sqlops
+from sqlops import Sqlops
 
 class FileHash:
 
@@ -40,7 +40,8 @@ class FileHash:
                     print(fileString)
                     finalHash = self.getSha256Hash(fileString)
                     print(finalHash)
-                    sqlops.sqlSignInsert(filename=name,filepath=filename,sign=finalHash,appId=1)
+                    sql = Sqlops()
+                    sql.sqlSignInsert(filename=name,filepath=filename,sign=finalHash,appId=1)
 #OOPS OBJECT
 file = FileHash()
 file.checkfolder('testdir')
