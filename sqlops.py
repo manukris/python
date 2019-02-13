@@ -7,9 +7,15 @@ import time
 class Sqlops:
 
 
-    def __init__(self):
+    def __init__(self,filename,filepath,sign,appid):
+
         self.conn = sqlite3.connect('test.db')
         self.sqlCursor = self.conn.cursor()
+        self.filename = filename
+        self.filepath = filepath
+        self.filetime = str(time.time())
+        self.sign     = sign
+        self.appid    = appid
 
     # def sqliteCreate():
     #
@@ -30,13 +36,17 @@ class Sqlops:
     # sqliteCreate()
 
 
-    def sqlSignInsert(self,filename,filepath,sign,appId):
+    def sqlSignInsert(self):
 
-        filetime = str(time.time())
-        sql = "INSERT INTO signature (filename,filepath,filetime,signature,appid) VALUES ('"+filename+"','"+filepath+"','"+filetime+"','"+sign+"',"+str(appId)+")"
+        sql = "INSERT INTO signature (filename,filepath,filetime,signature,appid) VALUES ('"+self.filename+"','"+self.filepath+"','"+self.filetime+"','"+self.sign+"',"+str(self.appId)+")"
         print(sql)
+
         self.sqlCursor.execute(sql)
+
         self.conn.commit()
+
+    # def sqlsignSelect(self):
+    #     sql = ""
 
 
 
