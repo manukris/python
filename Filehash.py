@@ -91,7 +91,7 @@ class FileHash:
 
 #oops object
 file = FileHash()
-#checking folder testdir
+#checking folder testdir change
 file.checkfolderSave('testdir')
 #printing no of files
 print(FileHash.filecount)
