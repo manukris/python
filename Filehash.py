@@ -25,7 +25,7 @@ class FileHash:
     def checkfoldersave(self,folder):
         #scans folders
         with os.scandir(folder) as dir_entries:
-            #iterates each entry
+            #iterates each entry of folder
             for entry in dir_entries:
                 info = entry.stat()  #get info about each files
 
