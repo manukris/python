@@ -89,7 +89,7 @@ class FileHash:
                     return filename,finalHash
 
 
-#OOPS OBJECT
+#oops object
 file = FileHash()
 #checking folder testdir
 file.checkfolderSave('testdir')
