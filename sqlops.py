@@ -38,11 +38,12 @@ class Sqlops:
 
     def sqlSignInsert(self):
 
+        # insert query
         sql = "INSERT INTO signature (filename,filepath,filetime,signature,appid) VALUES ('"+self.filename+"','"+self.filepath+"','"+self.filetime+"','"+self.sign+"',"+str(self.appId)+")"
         print(sql)
-
+        #execute sql
         self.sqlCursor.execute(sql)
-
+        #save values ro db
         self.conn.commit()
 
     # def sqlsignSelect(self):
