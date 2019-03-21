@@ -22,7 +22,7 @@ class FileHash:
         return readablehash
 
     #scans folders recursively fo get files
-    def checkfoldersave(self,folder,calltype):
+    def checkfoldersave(self,folder,calltype,appid):
         #scans folders
         with os.scandir(folder) as dir_entries:
             #iterates each entry of folder
@@ -36,7 +36,7 @@ class FileHash:
                 if(os.path.isdir(filename)):
 
                     if os.listdir(filename):
-                        self.checkfoldersave(filename,calltype)
+                        self.checkfoldersave(filename,calltype,appid)
 
                     else:
 
@@ -60,7 +60,7 @@ class FileHash:
                     #create object of sqloperations
                     if(calltype == "save"):
                         sql = Sqlops()
-                        sql.setData(filename=name,filepath=filename,sign=finalHash,appid=1)
+                        sql.setData(filename=name,filepath=filename,sign=finalHash,appid=appid)
 
                         #insert values to db
                         sql.sqlSignInsert()
@@ -72,11 +72,18 @@ class FileHash:
 
 
 #oops object
+
+
+#
 # file = FileHash()
 # #checking folder testdir
 #
+# sql = Sqlops()
 #
-# file.checkfoldersave('testdir',calltype="save")
+# # sql.resetDbs();
+# path = "/var/www/html/test"
+# appid = sql.setAppData(path=path)
+# file.checkfoldersave(folder=path,calltype="save",appid=appid)
 # print(file.fileDict)
 
 

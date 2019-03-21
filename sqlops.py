@@ -1,5 +1,6 @@
 import sqlite3 #sqlite library of python
 import time #time library of python
+import os
 
 
 
@@ -10,6 +11,43 @@ class Sqlops:
     def __init__(self):
         self.conn = sqlite3.connect('test.db')
         self.sqlCursor = self.conn.cursor()
+        self.createDbs()
+
+    def createDbs(self):
+        sql = """CREATE TABLE IF NOT EXISTS signature
+                                     (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                                     filename text, 
+                                     filepath text, 
+                                     filetime text, 
+                                     signature text, 
+                                     appid INTEGER);"""
+
+        self.sqlCursor.execute(sql)
+        self.conn.commit()
+
+        sql = """CREATE TABLE IF NOT EXISTS application
+                                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                                             name text, 
+                                             path text, 
+                                             time  text, 
+                                             status INTEGER DEFAULT 0
+                                             );"""
+        self.sqlCursor.execute(sql)
+        self.conn.commit()
+
+
+
+    def setAppData(self,**kwargs):
+        kwargs['time'] = str(time.time())
+        kwargs['appname'] = os.path.basename(kwargs['path'])
+        sql = "INSERT INTO application (name,path,time) VALUES ('" +kwargs['appname']+ "','" +kwargs['path'] + "','" +kwargs['time'] + "')"
+        print(sql)
+        # execute sql
+        self.sqlCursor.execute(sql)
+        # save values ro db
+        self.conn.commit()
+        appid = self.sqlCursor.lastrowid
+        return appid
 
 
     def setData(self,filename,filepath,sign,appid):
@@ -20,6 +58,14 @@ class Sqlops:
         self.appid = appid
 
 
+    def resetDbs(self):
+        sql = "DROP TABLE application"
+        self.sqlCursor.execute(sql)
+        self.conn.commit()
+        sql = "DROP TABLE signature"
+        self.sqlCursor.execute(sql)
+        self.conn.commit()
+        self.createDbs()
 
 
 
@@ -52,11 +98,19 @@ class Sqlops:
         #save values ro db
         self.conn.commit()
 
-    def sqlsignSelect(self):
-        sql = "SELECT * FROM signature where appid=1";
+    def sqlsignSelect(self,appid):
+        sql = "SELECT * FROM signature where appid="+str(appid);
         print(sql)
         result =  self.sqlCursor.execute(sql)
         return result
+
+    def sqlAppSelect(self):
+        sql = "SELECT * FROM application where status = 0";
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        return result
+
+
 
 
 
