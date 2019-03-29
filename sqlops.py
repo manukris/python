@@ -110,6 +110,21 @@ class Sqlops:
         result = self.sqlCursor.execute(sql)
         return result
 
+    def getAppName(self,appid):
+        sql = "SELECT name FROM application where id="+str(appid);
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        result = result.fetchone()
+        return result[0]
+
+
+if __name__ == "__main__":
+    sql = Sqlops()
+    appname = sql.getAppName(1)
+    print(appname)
+
+
+
 
 
 

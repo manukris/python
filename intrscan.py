@@ -1,5 +1,6 @@
 from Filehash import FileHash
 from sqlops import Sqlops
+from processlist import Processhandle
 
 
 
@@ -20,7 +21,9 @@ class FileScan():
             print("safe")
         else:
             print("change")
-            print(result)
+            ps = Processhandle()
+            for apps in FileScan.infectedApps:
+                ps.stopapp(apps)
 
     def filescan(self,applist):
 
