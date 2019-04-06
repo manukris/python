@@ -27,7 +27,7 @@ class Processhandle:
 if __name__ == "__main__":
     ps = Processhandle()
     ps.getCurrentProcessList()
-    ps.stopapp('postgres')
+    # ps.stopapp('postgres')
     ps.getCurrentProcessList()
 
 

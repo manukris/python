@@ -7,9 +7,9 @@ import os
 
 class Sqlops:
 
-
     def __init__(self):
-        self.conn = sqlite3.connect('test.db')
+        self.conn = sqlite3.connect('testintr.db')
+        print("sql connect")
         self.sqlCursor = self.conn.cursor()
         self.createDbs()
 
@@ -97,6 +97,7 @@ class Sqlops:
         self.sqlCursor.execute(sql)
         #save values ro db
         self.conn.commit()
+        print("insert")
 
     def sqlsignSelect(self,appid):
         sql = "SELECT * FROM signature where appid="+str(appid);
@@ -116,12 +117,19 @@ class Sqlops:
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
+    def getAppid(self):
+        sql = "SELECT count(*) FROM application";
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        result = result.fetchone()
+        if result[0] == 0:
+            return 1
+        return result[0]
+
 
 
 if __name__ == "__main__":
     sql = Sqlops()
-    appname = sql.getAppName(1)
-    print(appname)
 
 
 

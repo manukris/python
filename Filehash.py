@@ -1,5 +1,3 @@
-import hashlib
-
 # Python program to find SHA256 hexadecimal hash string of a file
 import hashlib
 import os
@@ -66,31 +64,6 @@ class FileHash:
                         sql.sqlSignInsert()
 
 
-
-
-
-
-
-#oops object
-
-
-#
-# file = FileHash()
-# #checking folder testdir
-#
-# sql = Sqlops()
-#
-# # sql.resetDbs();
-# path = "/var/www/html/test"
-# appid = sql.setAppData(path=path)
-# file.checkfoldersave(folder=path,calltype="save",appid=appid)
-# print(file.fileDict)
-
-
-
-
-
-#printing no of files
 
 
 
