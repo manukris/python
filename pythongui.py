@@ -51,6 +51,7 @@
 
 
 import wx
+from Filehash import *
 
 class MainWindow(wx.Frame):
 
@@ -89,24 +90,16 @@ class MainWindow(wx.Frame):
 
            pnl = wx.Panel(self)
 
-           listbox = wx.ListBox(pnl,pos=(10, 10),size=(500, 300))
+           self.listbox = wx.ListBox(pnl,pos=(10, 10),size=(500, 300))
 
            btn1 = wx.Button(pnl, label='Add application', pos=(10, 350), size=(120, -1))
-
            btn2 = wx.Button(pnl, label=' application', pos=(200, 350), size=(120, -1))
-
-
            btn4 = wx.Button(pnl, label=' label', pos=(550, 50), size=(120, -1))
 
            btn5 = wx.Button(pnl, label=' label', pos=(550, 150), size=(120, -1))
 
-
-           
-
-           # btn = wx.Button(pnl, label='Scan', pos=(90, 185), size=(60, -1))
-
-           # btn.Bind(wx.EVT_BUTTON, self.onFileopen)
-           
+           btn1.Bind(wx.EVT_BUTTON, self.onFileopen)
+        
     def onFileopen(self,e):
         with wx.DirDialog (None, "Choose input directory", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -115,6 +108,11 @@ class MainWindow(wx.Frame):
                     # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
             print(pathname)
+            self.listbox.Append(pathname)
+            filestr = FileHash()
+            filestr.checkfoldersave(pathname,calltype='save',appid=1)
+            
+            
 app = wx.App(False)
 frame = MainWindow(None, 'Sample application')
 app.MainLoop()
