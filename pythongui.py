@@ -110,7 +110,9 @@ class MainWindow(wx.Frame):
             print(pathname)
             self.listbox.Append(pathname)
             filestr = FileHash()
-            filestr.checkfoldersave(pathname,calltype='save',appid=1)
+            sqlops = Sqlops()
+            appid = sqlops.getAppid()
+            filestr.checkfoldersave(pathname,calltype='save',appid=appid)
             
             
 app = wx.App(False)
