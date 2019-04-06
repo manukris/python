@@ -58,16 +58,9 @@ class FileHash:
                     #create object of sqloperations
                     if(calltype == "save"):
                         sql = Sqlops()
+
                         sql.setData(filename=name,filepath=filename,sign=finalHash,appid=appid)
 
                         #insert values to db
                         sql.sqlSignInsert()
-
-
-
-
-
-
-
-
 
