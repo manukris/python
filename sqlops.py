@@ -8,7 +8,7 @@ import os
 class Sqlops:
 
     def __init__(self):
-        self.conn = sqlite3.connect('testintr.db')
+        self.conn = sqlite3.connect('test1.db')
         print("sql connect")
         self.sqlCursor = self.conn.cursor()
         self.createDbs()
@@ -117,19 +117,21 @@ class Sqlops:
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
-    def getAppid(self):
-        sql = "SELECT count(*) FROM application";
-        print(sql)
-        result = self.sqlCursor.execute(sql)
-        result = result.fetchone()
-        if result[0] == 0:
-            return 1
-        return result[0]
+    # def getAppid(self):
+    #     sql = "SELECT count(*) as rowcount FROM application";
+    #     print(sql)
+    #     result = self.sqlCursor.execute(sql)
+    #     result = result.fetchone()
+    #     print(result)
+    #     if result[0] == 0:
+    #         return 1
+    #     return result[0]
 
 
 
 if __name__ == "__main__":
     sql = Sqlops()
+    print(sql.getAppid())
 
 
 
