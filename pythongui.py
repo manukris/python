@@ -94,14 +94,19 @@ class MainWindow(wx.Frame):
 
            btn1 = wx.Button(pnl, label='Add application', pos=(10, 350), size=(120, -1))
            btn2 = wx.Button(pnl, label=' application', pos=(200, 350), size=(120, -1))
-           btn4 = wx.Button(pnl, label=' label', pos=(550, 50), size=(120, -1))
+           btn4 = wx.Button(pnl, label=' Scan', pos=(550, 50), size=(120, -1))
 
            btn5 = wx.Button(pnl, label=' label', pos=(550, 150), size=(120, -1))
 
            btn1.Bind(wx.EVT_BUTTON, self.onFileopen)
+
+
+
+
+
         
     def onFileopen(self,e):
-        with wx.DirDialog (None, "Choose input directory", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
+        with wx.DirDialog (None, "Choose App Folder", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
                  print("cancelled")
                  return     # the user changed their mind
@@ -113,6 +118,9 @@ class MainWindow(wx.Frame):
             sqlops = Sqlops()
             appid = sqlops.setAppData(path=pathname)
             filestr.checkfoldersave(pathname,calltype='save',appid=appid)
+            # wx.Gauge(pnl,)
+
+
             
             
 app = wx.App(False)
