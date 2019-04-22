@@ -8,7 +8,7 @@ import os
 class Sqlops:
 
     def __init__(self):
-        self.conn = sqlite3.connect('test1.db')
+        self.conn = sqlite3.connect('pythonIntrusion.db')
         print("sql connect")
         self.sqlCursor = self.conn.cursor()
         self.createDbs()
@@ -48,6 +48,20 @@ class Sqlops:
         self.conn.commit()
         appid = self.sqlCursor.lastrowid
         return appid
+
+    def checkAppExists(self,path):
+        result = ()
+        sql = "SELECT COUNT(*) as count  FROM application WHERE path='"+path+"'"
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        result = result.fetchone()
+        if result[0] > 0:
+            return True
+        else:
+            return False
+
+
+
 
 
     def setData(self,filename,filepath,sign,appid):
@@ -132,7 +146,7 @@ class Sqlops:
 
 if __name__ == "__main__":
     sql = Sqlops()
-    print(sql.getAppid())
+    sql.checkAppExists('/usr/lib/firefox2')
 
 
 

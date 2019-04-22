@@ -93,6 +93,13 @@ class MainWindow(wx.Frame):
 
            self.listbox = wx.ListBox(self.pnl,pos=(10, 10),size=(500, 300))
 
+           sqlops = Sqlops()
+           result = sqlops.sqlAppSelect()
+           apps = result.fetchall()
+           for app in apps:
+                self.listbox.Append(app[1])
+
+
            btn1 = wx.Button(self.pnl, label='Add application', pos=(10, 350), size=(120, -1))
            btn2 = wx.Button(self.pnl, label=' application', pos=(200, 350), size=(120, -1))
            btn4 = wx.Button(self.pnl, label=' Scan', pos=(550, 50), size=(120, -1))
@@ -126,10 +133,6 @@ class MainWindow(wx.Frame):
 
 
 
-
-
-
-
     def onScan(self,e):
 
         count = 0
@@ -147,12 +150,25 @@ class MainWindow(wx.Frame):
                     # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
             print(pathname)
+            sqlops = Sqlops()
+            if sqlops.checkAppExists(pathname):
+                print("duplicate")
+                dialog = wx.MessageDialog(self, message="Error", caption="Application Already exists",
+                                          style=wx.OK | wx.ICON_ERROR)
+                dialog.ShowModal()
+                return
+
+
             self.listbox.Append(pathname)
             filestr = FileHash()
-            sqlops = Sqlops()
+
             appid = sqlops.setAppData(path=pathname)
             filestr.checkfoldersave(pathname,calltype='save',appid=appid)
             # wx.Gauge(pnl,)
+
+            dialog = wx.MessageDialog(self, message="Success", caption="Successfully Added Application",
+                                      style=wx.OK | wx.ICON_INFORMATION)
+            dialog.ShowModal()
 
 
             
