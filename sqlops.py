@@ -66,6 +66,7 @@ class Sqlops:
         self.sqlCursor.execute(sql)
         self.conn.commit()
         self.createDbs()
+        print("reset dbs")
 
 
 

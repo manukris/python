@@ -97,10 +97,34 @@ class MainWindow(wx.Frame):
            btn2 = wx.Button(self.pnl, label=' application', pos=(200, 350), size=(120, -1))
            btn4 = wx.Button(self.pnl, label=' Scan', pos=(550, 50), size=(120, -1))
 
-           btn5 = wx.Button(self.pnl, label=' label', pos=(550, 150), size=(120, -1))
+           btn5 = wx.Button(self.pnl, label='Reset Database', pos=(550, 150), size=(120, -1))
 
            btn1.Bind(wx.EVT_BUTTON, self.onFileopen)
            btn4.Bind(wx.EVT_BUTTON,self.onScan)
+           btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
+
+
+
+
+
+
+
+
+    def onResetDb(self,e):
+        dialog = wx.MessageDialog(self, message="Reset Database", caption="Confirm Reset Database",
+                                  style=wx.OK | wx.CANCEL | wx.ICON_WARNING)
+        result = dialog.ShowModal()
+        if result == wx.ID_CANCEL:
+            print("cancelled")
+            return
+        else:
+            sqlobj = Sqlops()
+            sqlobj.resetDbs()
+            dialog = wx.MessageDialog(self, message="Success", caption="Successfully Reset Database",
+                                      style=wx.OK |wx.ICON_INFORMATION)
+            dialog.ShowModal()
+
+
 
 
 
