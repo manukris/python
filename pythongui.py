@@ -136,11 +136,23 @@ class MainWindow(wx.Frame):
     def onScan(self,e):
 
         count = 0
+        max = 80
         progress_dialog = wx.ProgressDialog(title="Scanning", message="Scanning Files",
-                                           maximum=10 * 100, parent=self,style=wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME)
-        if progress_dialog.ShowModal() == wx.ID_CANCEL:
-            print("cancelled")
-            return  # the user changed their mind
+                                           maximum=max, parent=self,style=wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME|wx.PD_APP_MODAL)
+
+        keepGoing = True
+        count = 0
+
+        while keepGoing and count < max:
+            count += 1
+            wx.MilliSleep(250)
+
+            if count >= max / 2:
+                (keepGoing, skip) = progress_dialog.Update(count, "Half-time!")
+            else:
+                (keepGoing, skip) = progress_dialog.Update(count)
+        progress_dialog.Destroy()
+
         
     def onFileopen(self,e):
         with wx.DirDialog (None, "Choose App Folder", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
