@@ -2,4 +2,5 @@
 #
 # file = FileHash()
 # file.checkfoldersave('testdir','scan')
-# print(FileHash.fileDict)h
+# print(FileHash.fileDict)
+
