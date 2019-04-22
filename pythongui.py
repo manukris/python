@@ -51,6 +51,7 @@
 
 
 import wx
+import time
 from Filehash import *
 
 class MainWindow(wx.Frame):
@@ -88,22 +89,31 @@ class MainWindow(wx.Frame):
            # Adding the menu bar to the frame content                           
            self.SetMenuBar(menu_bar)
 
-           pnl = wx.Panel(self)
+           self.pnl = wx.Panel(self)
 
-           self.listbox = wx.ListBox(pnl,pos=(10, 10),size=(500, 300))
+           self.listbox = wx.ListBox(self.pnl,pos=(10, 10),size=(500, 300))
 
-           btn1 = wx.Button(pnl, label='Add application', pos=(10, 350), size=(120, -1))
-           btn2 = wx.Button(pnl, label=' application', pos=(200, 350), size=(120, -1))
-           btn4 = wx.Button(pnl, label=' Scan', pos=(550, 50), size=(120, -1))
+           btn1 = wx.Button(self.pnl, label='Add application', pos=(10, 350), size=(120, -1))
+           btn2 = wx.Button(self.pnl, label=' application', pos=(200, 350), size=(120, -1))
+           btn4 = wx.Button(self.pnl, label=' Scan', pos=(550, 50), size=(120, -1))
 
-           btn5 = wx.Button(pnl, label=' label', pos=(550, 150), size=(120, -1))
+           btn5 = wx.Button(self.pnl, label=' label', pos=(550, 150), size=(120, -1))
 
            btn1.Bind(wx.EVT_BUTTON, self.onFileopen)
+           btn4.Bind(wx.EVT_BUTTON,self.onScan)
 
 
 
 
 
+    def onScan(self,e):
+
+        count = 0
+        progress_dialog = wx.ProgressDialog(title="Scanning", message="Scanning Files",
+                                           maximum=10 * 100, parent=self,style=wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME)
+        if progress_dialog.ShowModal() == wx.ID_CANCEL:
+            print("cancelled")
+            return  # the user changed their mind
         
     def onFileopen(self,e):
         with wx.DirDialog (None, "Choose App Folder", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
