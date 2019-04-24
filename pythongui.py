@@ -1,58 +1,11 @@
-# import wx
-#
-#
-# class MyTarget(wx.TextDropTarget):
-#     def __init__(self, object):
-#         wx.TextDropTarget.__init__(self)
-#         self.object = object
-#
-#     def OnDropText(self, x, y, data):
-#         self.object.InsertStringItem(0, data)
-#
-#
-# class Mywin(wx.Frame):
-#
-#     def __init__(self, parent, title):
-#         super(Mywin, self).__init__(parent, title=title, size=(-1, 300))
-#         panel = wx.Panel(self)
-#         box = wx.BoxSizer(wx.HORIZONTAL)
-#         languages = ['C', 'C++', 'Java', 'Python', 'Perl', 'JavaScript',
-#                      'PHP', 'VB.NET', 'C#']
-#
-#         self.lst1 = wx.ListCtrl(panel, -1, style=wx.LC_LIST)
-#         self.lst2 = wx.ListCtrl(panel, -1, style=wx.LC_LIST)
-#         for lang in languages:
-#             self.lst1.InsertStringItem(0, lang)
-#
-#         dt = MyTarget(self.lst2)
-#         self.lst2.SetDropTarget(dt)
-#         wx.EVT_LIST_BEGIN_DRAG(self, self.lst1.GetId(), self.OnDragInit)
-#
-#         box.Add(self.lst1, 0, wx.EXPAND)
-#         box.Add(self.lst2, 1, wx.EXPAND)
-#
-#         panel.SetSizer(box)
-#         panel.Fit()
-#         self.Centre()
-#         self.Show(True)
-#
-#     def OnDragInit(self, event):
-#         text = self.lst1.GetItemText(event.GetIndex())
-#         tobj = wx.PyTextDataObject(text)
-#         src = wx.DropSource(self.lst1)
-#         src.SetData(tobj)
-#         src.DoDragDrop(True)
-#         self.lst1.DeleteItem(event.GetIndex())
-#
-#
-# ex = wx.App()
-# Mywin(None, 'Drag&Drop Demo')
-# ex.MainLoop()
+
 
 
 import wx
 import time
 from Filehash import *
+from intrscan import FileScan
+from processlist import Processhandle
 
 class MainWindow(wx.Frame):
 
@@ -112,11 +65,6 @@ class MainWindow(wx.Frame):
 
 
 
-
-
-
-
-
     def onResetDb(self,e):
         dialog = wx.MessageDialog(self, message="Reset Database", caption="Confirm Reset Database",
                                   style=wx.OK | wx.CANCEL | wx.ICON_WARNING)
@@ -130,28 +78,61 @@ class MainWindow(wx.Frame):
             dialog = wx.MessageDialog(self, message="Success", caption="Successfully Reset Database",
                                       style=wx.OK |wx.ICON_INFORMATION)
             dialog.ShowModal()
-
+            self.listbox.Clear()
 
 
     def onScan(self,e):
 
-        count = 0
-        max = 80
-        progress_dialog = wx.ProgressDialog(title="Scanning", message="Scanning Files",
-                                           maximum=max, parent=self,style=wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME|wx.PD_APP_MODAL)
+        fs = FileScan()
+        result = fs.scan()
+        
+        if result != 1:
+            sql = Sqlops()
+            appname = sql.getAppName(result[5])
 
-        keepGoing = True
-        count = 0
+            dialog = wx.MessageDialog(self, message="This file Changed Location "+result[2]+"Appname =="+appname, caption="File Changed",
+                                      style=wx.OK | wx.ICON_ERROR)
+            dialog.ShowModal()
 
-        while keepGoing and count < max:
-            count += 1
-            wx.MilliSleep(250)
-
-            if count >= max / 2:
-                (keepGoing, skip) = progress_dialog.Update(count, "Half-time!")
+            dialog = wx.MessageDialog(self, message="Stop Application "+appname, caption="Confirm Stop",
+                                      style=wx.OK | wx.CANCEL | wx.ICON_WARNING)                                               
+            result = dialog.ShowModal()
+            if result == wx.ID_CANCEL:
+                print("caneled")
             else:
-                (keepGoing, skip) = progress_dialog.Update(count)
-        progress_dialog.Destroy()
+                ps = Processhandle()
+                result = ps.stopapp(appname)
+                if result == 1:
+                    print("success")
+                else:
+                    print("error")
+
+            print(result)
+        else:
+            print("okk")
+
+
+        #
+        # count = 0
+        # max = 80
+        # progress_dialog = wx.ProgressDialog(title="Scanning", message="Scanning Files",
+        #                                    maximum=max, parent=self,style=wx.PD_CAN_ABORT|wx.PD_ELAPSED_TIME|wx.PD_APP_MODAL)
+        #
+        # keepGoing = True
+        # count = 0
+        #
+        # while keepGoing and count < max:
+        #     count += 1
+        #     wx.MilliSleep(250)
+        #
+        #     if count >= max / 2:
+        #         (keepGoing, skip) = progress_dialog.Update(count, "Half-time!")
+        #     else:
+        #         (keepGoing, skip) = progress_dialog.Update(count)
+        # progress_dialog.Destroy()
+
+
+
 
         
     def onFileopen(self,e):
@@ -170,10 +151,10 @@ class MainWindow(wx.Frame):
                 dialog.ShowModal()
                 return
 
-
-            self.listbox.Append(pathname)
             filestr = FileHash()
 
+            appname = os.path.basename(pathname)
+            self.listbox.Append(appname)
             appid = sqlops.setAppData(path=pathname)
             filestr.checkfoldersave(pathname,calltype='save',appid=appid)
             # wx.Gauge(pnl,)

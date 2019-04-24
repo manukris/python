@@ -37,20 +37,21 @@ class FileHash:
                         self.checkfoldersave(filename,calltype,appid)
 
                     else:
-
-                        print("empty")
+                        pass
+                        # print("empty")
 
                 else:
 
                     hash = self.getReadableHash(filename)
 
                     # construct filestring by adding filehash + File Size + Last modified time + filename
+
                     fileString = hash + str(info.st_size) + str(info.st_mtime) + filename
 
                     fileString = fileString.encode('utf-8')
                     finalHash = self.getSha256Hash(fileString)
 
-                    print(finalHash)
+                    # print(finalHash)
                     FileHash.filecount = FileHash.filecount + 1
                     # FileHash.fileDict[FileHash.filecount]['filehash'] = finalHash
                     FileHash.fileDict[finalHash] = filename

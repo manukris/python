@@ -16,25 +16,15 @@ class FileScan():
         sql = Sqlops()
         apps = sql.sqlAppSelect()
         applist = apps.fetchall()
-        result = self.filescan(applist)
-        if result == 0:
-            print("safe")
-        else:
-            print("change")
-            ps = Processhandle()
-            for apps in FileScan.infectedApps:
-                ps.stopapp(apps)
-
-    def filescan(self,applist):
-
         filerror = 0
+        filepath = ""
+        print(applist)
         for apps in applist:
             file = FileHash()
             path = apps[2]
             id   = apps[0]
             file.checkfoldersave(folder=path,calltype="scan",appid=id)
             filedict = file.fileDict
-            sql = Sqlops()
             fileresult = sql.sqlsignSelect(appid=id)
 
             for rows in fileresult:
@@ -43,23 +33,19 @@ class FileScan():
                     break
 
                 for x, y in filedict.items():
+
                     if(rows[2] == y):
+
                         if(rows[4] == x):
-
-                            print("no change")
-
+                            pass
                         else:
-
-                            print("File changed")
                             print(rows[2])
                             filerror = 1
-                            appid = rows[5]
-                            FileScan.infectedApps.append(appid)
-                            break
+                            filepath = rows
+                            print(filepath)
+                            return filepath
             else:
-                print("breked")
-        else:
-            return 0
+                return 1
 
 
 

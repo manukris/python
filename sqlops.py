@@ -9,7 +9,7 @@ class Sqlops:
 
     def __init__(self):
         self.conn = sqlite3.connect('pythonIntrusion.db')
-        print("sql connect")
+        # print("sql connect")
         self.sqlCursor = self.conn.cursor()
         self.createDbs()
 
@@ -116,8 +116,8 @@ class Sqlops:
 
     def sqlsignSelect(self,appid):
         sql = "SELECT * FROM signature where appid="+str(appid);
-        print(sql)
         result =  self.sqlCursor.execute(sql)
+        result = self.sqlCursor.fetchall()
         return result
 
     def sqlAppSelect(self):

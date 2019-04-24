@@ -10,11 +10,13 @@ class Processhandle:
            try:
                pinfo = proc.as_dict(attrs=['pid', 'name', 'username'])
            except NoSuchProcess:
-              print("exception")
+              return 0
            else:
               print(pinfo)
               if pinfo['name'] == appname or pinfo['name'] == appname+".exe":
                   proc.kill()
+                  return 1
+
     def getCurrentProcessList(self):
         for proc in process_iter():
             try:
