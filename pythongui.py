@@ -16,6 +16,9 @@ class MainWindow(wx.Frame):
         self.gui()
         self.Show()
 
+
+
+
     def gui(self):
            # A Statusbar in the bottom of the window                            
            self.CreateStatusBar()                                               
@@ -63,6 +66,14 @@ class MainWindow(wx.Frame):
            btn4.Bind(wx.EVT_BUTTON,self.onScan)
            btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
 
+    def reloadListBox(self):
+        self.listbox.Clear()
+        sqlops = Sqlops()
+        result = sqlops.sqlAppSelect()
+        apps = result.fetchall()
+        for app in apps:
+            self.listbox.Append(app[1])
+
 
 
     def onResetDb(self,e):
@@ -88,6 +99,7 @@ class MainWindow(wx.Frame):
         
         if result != 1:
             sql = Sqlops()
+            appid = result[5]
             appname = sql.getAppName(result[5])
 
             dialog = wx.MessageDialog(self, message="This file Changed Location "+result[2]+"Appname =="+appname, caption="File Changed",
@@ -103,6 +115,8 @@ class MainWindow(wx.Frame):
                 ps = Processhandle()
                 result = ps.stopapp(appname)
                 if result == 1:
+                    sql.changeAppStatus(appid)
+                    self.reloadListBox()
                     print("success")
                 else:
                     print("error")
