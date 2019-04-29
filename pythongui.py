@@ -1,6 +1,5 @@
 
 
-
 import wx
 import time
 from Filehash import *
@@ -47,13 +46,13 @@ class MainWindow(wx.Frame):
 
            self.pnl = wx.Panel(self)
 
-           self.listbox = wx.ListBox(self.pnl,pos=(10, 10),size=(500, 300))
+           self.listbox = wx.ListCtrl(self.pnl,pos=(10, 10),size=(500, 300))
 
            sqlops = Sqlops()
            result = sqlops.sqlAppSelect()
            apps = result.fetchall()
-           for app in apps:
-                self.listbox.Append(app[1])
+           # for app in apps:
+           #      self.listbox.Append(app[1])
 
 
            btn1 = wx.Button(self.pnl, label='Add application', pos=(10, 350), size=(120, -1))
@@ -66,13 +65,13 @@ class MainWindow(wx.Frame):
            btn4.Bind(wx.EVT_BUTTON,self.onScan)
            btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
 
-    def reloadListBox(self):
-        self.listbox.Clear()
-        sqlops = Sqlops()
-        result = sqlops.sqlAppSelect()
-        apps = result.fetchall()
-        for app in apps:
-            self.listbox.Append(app[1])
+    # def reloadListBox(self):
+    #     self.listbox.Clear()
+    #     sqlops = Sqlops()
+    #     result = sqlops.sqlAppSelect()
+    #     apps = result.fetchall()
+    #     for app in apps:
+    #         self.listbox.Append(app[1])
 
 
 
@@ -116,7 +115,7 @@ class MainWindow(wx.Frame):
                 result = ps.stopapp(appname)
                 if result == 1:
                     sql.changeAppStatus(appid)
-                    self.reloadListBox()
+                    # self.reloadListBox()
                     print("success")
                 else:
                     print("error")
@@ -183,8 +182,3 @@ class MainWindow(wx.Frame):
 app = wx.App(False)
 frame = MainWindow(None, 'Sample application')
 app.MainLoop()
-
-
-
-
-
