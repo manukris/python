@@ -121,7 +121,7 @@ class Sqlops:
         return result
 
     def sqlAppSelect(self):
-        sql = "SELECT * FROM application where status = 0";
+        sql = "SELECT * FROM application";
         print(sql)
         result = self.sqlCursor.execute(sql)
         return result
