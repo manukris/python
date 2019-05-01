@@ -46,13 +46,20 @@ class MainWindow(wx.Frame):
 
            self.pnl = wx.Panel(self)
 
-           self.listbox = wx.ListCtrl(self.pnl,pos=(10, 10),size=(500, 300))
+           self.listbox = wx.ListCtrl(self.pnl,pos=(10, 10),size=(500, 300),style=wx.LC_REPORT)
+
+           self.listbox.InsertColumn(0,"Application",width=420)
+           self.listbox.InsertColumn(1,'Status')
 
            sqlops = Sqlops()
            result = sqlops.sqlAppSelect()
            apps = result.fetchall()
-           # for app in apps:
-           #      self.listbox.Append(app[1])
+
+           for app in apps:
+               index = self.listbox.InsertItem(0, app[1])
+               status = self.getStatus(app[4])
+               self.listbox.SetItem(index, 1, status)
+
 
 
            btn1 = wx.Button(self.pnl, label='Add application', pos=(10, 350), size=(120, -1))
@@ -65,15 +72,25 @@ class MainWindow(wx.Frame):
            btn4.Bind(wx.EVT_BUTTON,self.onScan)
            btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
 
-    # def reloadListBox(self):
-    #     self.listbox.Clear()
-    #     sqlops = Sqlops()
-    #     result = sqlops.sqlAppSelect()
-    #     apps = result.fetchall()
-    #     for app in apps:
-    #         self.listbox.Append(app[1])
+
+    def reloadListBox(self):
+        self.listbox.DeleteAllItems()
+        sqlops = Sqlops()
+        result = sqlops.sqlAppSelect()
+        apps = result.fetchall()
+        for app in apps:
+            index = self.listbox.InsertItem(0, app[1])
+            status = self.getStatus(app[4])
+            self.listbox.SetItem(index, 1, status)
 
 
+    def getStatus(self,status):
+        if status == 0:
+            return "Added"
+        elif status == 1:
+            return "Blocked"
+        elif status == 2:
+            return "Excepmted"
 
     def onResetDb(self,e):
         dialog = wx.MessageDialog(self, message="Reset Database", caption="Confirm Reset Database",
@@ -88,7 +105,7 @@ class MainWindow(wx.Frame):
             dialog = wx.MessageDialog(self, message="Success", caption="Successfully Reset Database",
                                       style=wx.OK |wx.ICON_INFORMATION)
             dialog.ShowModal()
-            self.listbox.Clear()
+            self.listbox.DeleteAllItems()
 
 
     def onScan(self,e):
@@ -115,7 +132,7 @@ class MainWindow(wx.Frame):
                 result = ps.stopapp(appname)
                 if result == 1:
                     sql.changeAppStatus(appid)
-                    # self.reloadListBox()
+                    self.reloadListBox()
                     print("success")
                 else:
                     print("error")
@@ -167,7 +184,9 @@ class MainWindow(wx.Frame):
             filestr = FileHash()
 
             appname = os.path.basename(pathname)
-            self.listbox.Append(appname)
+            index = self.listbox.InsertItem(0, appname)
+            status = self.getStatus(0)
+            self.listbox.SetItem(index, 1, status)
             appid = sqlops.setAppData(path=pathname)
             filestr.checkfoldersave(pathname,calltype='save',appid=appid)
             # wx.Gauge(pnl,)
