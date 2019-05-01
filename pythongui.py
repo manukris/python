@@ -15,9 +15,6 @@ class MainWindow(wx.Frame):
         self.gui()
         self.Show()
 
-
-
-
     def gui(self):
            # A Statusbar in the bottom of the window                            
            self.CreateStatusBar()                                               
@@ -51,6 +48,9 @@ class MainWindow(wx.Frame):
            self.listbox.InsertColumn(0,"Application",width=420)
            self.listbox.InsertColumn(1,'Status')
 
+
+           self.listbox.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+
            sqlops = Sqlops()
            result = sqlops.sqlAppSelect()
            apps = result.fetchall()
@@ -62,15 +62,20 @@ class MainWindow(wx.Frame):
 
 
 
-           btn1 = wx.Button(self.pnl, label='Add application', pos=(10, 350), size=(120, -1))
-           btn2 = wx.Button(self.pnl, label=' application', pos=(200, 350), size=(120, -1))
-           btn4 = wx.Button(self.pnl, label=' Scan', pos=(550, 50), size=(120, -1))
+           btn1 = wx.Button(self.pnl, label='Add Application', pos=(10, 350), size=(120, -1))
+           btn2 = wx.Button(self.pnl, label='Add Exception', pos=(200, 350), size=(120, -1))
+           btn4 = wx.Button(self.pnl, label='Scan', pos=(550, 50), size=(120, -1))
 
            btn5 = wx.Button(self.pnl, label='Reset Database', pos=(550, 150), size=(120, -1))
 
            btn1.Bind(wx.EVT_BUTTON, self.onFileopen)
            btn4.Bind(wx.EVT_BUTTON,self.onScan)
            btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
+
+    def OnRightDown(self, e):
+        menu = wx.Menu()
+        itemOne = menu.Append(wx.ID_NEW, '&New')
+        wx.CONTROL_SPECIAL(menu)
 
 
     def reloadListBox(self):
@@ -197,7 +202,8 @@ class MainWindow(wx.Frame):
 
 
             
-            
 app = wx.App(False)
-frame = MainWindow(None, 'Sample application')
+frame = MainWindow(None, 'Intrusion Detection System')
 app.MainLoop()
+
+
