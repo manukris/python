@@ -49,8 +49,6 @@ class MainWindow(wx.Frame):
            self.listbox.InsertColumn(1,'Status')
 
 
-           self.listbox.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
-
            sqlops = Sqlops()
            result = sqlops.sqlAppSelect()
            apps = result.fetchall()
@@ -60,6 +58,7 @@ class MainWindow(wx.Frame):
                status = self.getStatus(app[4])
                self.listbox.SetItem(index, 1, status)
 
+           self.listbox.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnRightDown)
 
 
            btn1 = wx.Button(self.pnl, label='Add Application', pos=(10, 350), size=(120, -1))
@@ -73,9 +72,21 @@ class MainWindow(wx.Frame):
            btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
 
     def OnRightDown(self, e):
-        menu = wx.Menu()
-        itemOne = menu.Append(wx.ID_NEW, '&New')
-        wx.CONTROL_SPECIAL(menu)
+        self.popUpmenu = wx.Menu()
+        itemOne = self.popUpmenu.Append(wx.ID_ANY, 'Add Exception')
+        itemOne1 = self.popUpmenu.Append(wx.ID_ANY, 'Add Exception')
+
+        popup = self.pnl.PopupMenu(self.popUpmenu,e.GetPoint())
+        self.popUpmenu.Bind(wx.EVT_MENU,self.OnPopupItemSelected)
+
+
+
+
+
+
+    def OnPopupItemSelected(self,e):
+
+        print("hello")
 
 
     def reloadListBox(self):

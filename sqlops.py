@@ -60,10 +60,6 @@ class Sqlops:
         else:
             return False
 
-
-
-
-
     def setData(self,filename,filepath,sign,appid):
         self.filename = filename
         self.filepath = filepath
