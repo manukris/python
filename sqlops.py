@@ -128,12 +128,21 @@ class Sqlops:
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
-    def changeAppStatus(self,appid):
-        sql = "UPDATE application SET status = 1 WHERE id="+str(appid)
+    def changeAppStatus(self,appid,status=1):
+        sql = "UPDATE application SET status = "+str(status)+" WHERE id="+str(appid)
         # execute sql
         self.sqlCursor.execute(sql)
         # save values ro db
         self.conn.commit()
+
+    def delAppSign(self,appId):
+
+        sql = "DELETE FROM  application  WHERE appid="+str(appId)
+        # execute sql
+        self.sqlCursor.execute(sql)
+        # save values ro db
+        self.conn.commit()
+
 
     # def getAppid(self):
     #     sql = "SELECT count(*) as rowcount FROM application";
