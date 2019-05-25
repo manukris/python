@@ -14,6 +14,7 @@ class MainWindow(wx.Frame):
         self.Centre()
         self.gui()
         self.Show()
+        self.sqlops = Sqlops()
 
     def gui(self):
            # A Statusbar in the bottom of the window                            
@@ -91,7 +92,15 @@ class MainWindow(wx.Frame):
             print("Select an App")
         else:
             apps = self.listbox.GetFirstSelected()
-            print(apps)
+            while (apps != -1):
+                appname = self.listbox.GetItemText(item=apps,col=0)
+                appid   = self.sqlops.getAppId(appname)
+                self.sqlops.changeAppStatus(appid,2)
+                self.sqlops.deleteExptAppFile(appid)
+                apps = self.listbox.GetNextSelected(apps)
+            self.reloadListBox()
+
+
 
 
     # def OnPopupItemSelected(self,e):

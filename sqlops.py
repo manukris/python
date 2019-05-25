@@ -128,12 +128,29 @@ class Sqlops:
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
+
+    def getAppId(self, appname):
+        sql = "SELECT id FROM application where name='"+appname+"'";
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        result = result.fetchone()
+        return result[0]
+
     def changeAppStatus(self,appid,status=1):
         sql = "UPDATE application SET status = "+str(status)+" WHERE id="+str(appid)
         # execute sql
         self.sqlCursor.execute(sql)
         # save values ro db
         self.conn.commit()
+
+    def deleteExptAppFile(self,appid):
+        sql = "DELETE FROM  signature  WHERE appid=" + str(appid)
+        # execute sql
+        self.sqlCursor.execute(sql)
+        # save values ro db
+        self.conn.commit()
+
+
 
     def delAppSign(self,appId):
 
@@ -142,6 +159,9 @@ class Sqlops:
         self.sqlCursor.execute(sql)
         # save values ro db
         self.conn.commit()
+
+
+
 
 
     # def getAppid(self):
