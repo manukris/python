@@ -58,7 +58,7 @@ class MainWindow(wx.Frame):
                status = self.getStatus(app[4])
                self.listbox.SetItem(index, 1, status)
 
-           self.listbox.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnRightDown)
+           # self.listbox.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnRightDown)
 
 
            btn1 = wx.Button(self.pnl, label='Add Application', pos=(10, 350), size=(120, -1))
@@ -70,23 +70,33 @@ class MainWindow(wx.Frame):
            btn1.Bind(wx.EVT_BUTTON, self.onFileopen)
            btn4.Bind(wx.EVT_BUTTON,self.onScan)
            btn5.Bind(wx.EVT_BUTTON,self.onResetDb)
-
-    def OnRightDown(self, e):
-        self.popUpmenu = wx.Menu()
-        itemOne = self.popUpmenu.Append(wx.ID_ANY, 'Add Exception')
-        itemOne1 = self.popUpmenu.Append(wx.ID_ANY, 'Add Exception')
-
-        popup = self.pnl.PopupMenu(self.popUpmenu,e.GetPoint())
-        self.popUpmenu.Bind(wx.EVT_MENU,self.OnPopupItemSelected)
-
-
-
+           btn2.Bind(wx.EVT_BUTTON, self.onExcept)
+    #
+    # def OnRightDown(self, e):
+    #     self.popUpmenu = wx.Menu()
+    #     itemOne = self.popUpmenu.Append(wx.ID_ANY, 'Add Exception')
+    #     itemOne1 = self.popUpmenu.Append(wx.ID_ANY, 'Add Exception')
+    #
+    #     popup = self.pnl.PopupMenu(self.popUpmenu,e.GetPoint())
+    #     self.popUpmenu.Bind(wx.EVT_MENU,self.OnPopupItemSelected)
 
 
 
-    def OnPopupItemSelected(self,e):
 
-        print("hello")
+
+    def onExcept(self,event):
+        count = self.listbox.SelectedItemCount
+        print(count)
+        if count == 0:
+            print("Select an App")
+        else:
+            apps = self.listbox.GetFirstSelected()
+            print(apps)
+
+
+    # def OnPopupItemSelected(self,e):
+    #
+    #     print("hello")
 
 
     def reloadListBox(self):
