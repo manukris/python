@@ -16,6 +16,8 @@ class FileScan():
         sql = Sqlops()
         apps = sql.sqlAppSelect()
         applist = apps.fetchall()
+        if not applist:
+            return False
         filerror = 0
         filepath = ""
         print(applist)

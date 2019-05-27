@@ -117,7 +117,15 @@ class Sqlops:
         return result
 
     def sqlAppSelect(self):
-        sql = "SELECT * FROM application";
+        sql = "SELECT * FROM application where status = 0";
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        return result
+
+
+
+    def sqlAppSelectAll(self):
+        sql = "SELECT * FROM application ";
         print(sql)
         result = self.sqlCursor.execute(sql)
         return result
@@ -131,6 +139,13 @@ class Sqlops:
 
     def getAppId(self, appname):
         sql = "SELECT id FROM application where name='"+appname+"'";
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        result = result.fetchone()
+        return result[0]
+
+    def getAppPath(self, appname):
+        sql = "SELECT path FROM application where name='" + appname + "'";
         print(sql)
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
