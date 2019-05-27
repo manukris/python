@@ -151,6 +151,13 @@ class Sqlops:
         result = result.fetchone()
         return result[0]
 
+    def getAppStatus(self, appname):
+        sql = "SELECT status FROM application where name='" + appname + "'";
+        print(sql)
+        result = self.sqlCursor.execute(sql)
+        result = result.fetchone()
+        return result[0]
+
     def changeAppStatus(self,appid,status=1):
         sql = "UPDATE application SET status = "+str(status)+" WHERE id="+str(appid)
         # execute sql

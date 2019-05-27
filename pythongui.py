@@ -10,11 +10,16 @@ class MainWindow(wx.Frame):
 
     def __init__(self, parent, title):
 
-        wx.Frame.__init__(self, parent, title=title,size=(700, 500))
+
+        self.sqlops   = Sqlops()
+        self.filehash = FileHash()
+        self.filescan = FileScan()
+        self.ps       = Processhandle()
+
+        wx.Frame.__init__(self, parent, title=title, size=(700, 500))
         self.Centre()
         self.gui()
         self.Show()
-        self.sqlops = Sqlops()
 
     def gui(self):
            # A Statusbar in the bottom of the window                            
@@ -49,9 +54,7 @@ class MainWindow(wx.Frame):
            self.listbox.InsertColumn(0,"Application",width=420)
            self.listbox.InsertColumn(1,'Status')
 
-
-           sqlops = Sqlops()
-           result = sqlops.sqlAppSelectAll()
+           result = self.sqlops.sqlAppSelectAll()
            apps = result.fetchall()
 
            for app in apps:
@@ -59,7 +62,6 @@ class MainWindow(wx.Frame):
                status = self.getStatus(app[4])
                self.listbox.SetItem(index, 1, status)
 
-           # self.listbox.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.OnRightDown)
 
 
            btn1 = wx.Button(self.pnl, label='Add Application', pos=(10, 350), size=(120, -1))
@@ -76,36 +78,43 @@ class MainWindow(wx.Frame):
            btn3.Bind(wx.EVT_BUTTON, self.onUpdate)
 
 
-    def onExcept(self,event):
 
-        dialog = wx.MessageDialog(self, message="Add Exception", caption="Confirm delete Signatiures",
+    def messageDialog(self,message,caption):
+
+        dialog = wx.MessageDialog(self, message=message, caption=caption,
                                   style=wx.OK | wx.CANCEL | wx.ICON_WARNING)
         result = dialog.ShowModal()
         if result == wx.ID_CANCEL:
-            return
+            return False
+        return True
+
+
+
+    def onExcept(self,event):
+        count = self.listbox.SelectedItemCount
+        if count == 0:
+            self.messageDialog(message="No app Selected to Add exception", caption="Error")
+            return  False
+        if not self.messageDialog(message="Add Exception",caption="Confirm delete Signatiures"):
+            return False
         else:
-            count = self.listbox.SelectedItemCount
-            if count == 0:
-                print("Select an App")
-            else:
                 apps = self.listbox.GetFirstSelected()
                 while (apps != -1):
+
                     appname = self.listbox.GetItemText(item=apps,col=0)
-                    appid   = self.sqlops.getAppId(appname)
-                    self.sqlops.changeAppStatus(appid,2)
-                    self.sqlops.deleteExptAppFile(appid)
+
+                    if(self.sqlops.getAppStatus(appname) == 0):
+                        appid   = self.sqlops.getAppId(appname)
+                        self.sqlops.changeAppStatus(appid,2)
+                        self.sqlops.deleteExptAppFile(appid)
                     apps = self.listbox.GetNextSelected(apps)
                 self.reloadListBox()
 
 
     def onUpdate(self,event):
 
-
-        dialog = wx.MessageDialog(self, message="Update File Signature", caption="Confirm Update Signatiures",
-                                  style=wx.OK | wx.CANCEL | wx.ICON_WARNING)
-        result = dialog.ShowModal()
-        if result == wx.ID_CANCEL:
-            return
+        if not self.messageDialog(message = "Update File Signature",caption= "Confirm Update Signatiures" ):
+            return False
         else:
             count = self.listbox.SelectedItemCount
             if count == 0:
@@ -113,9 +122,9 @@ class MainWindow(wx.Frame):
             else:
                 apps = self.listbox.GetFirstSelected()
                 while (apps != -1):
-                    appname = self.listbox.GetItemText(item=apps,col=0)
+                    appname  = self.listbox.GetItemText(item=apps,col=0)
                     pathname = self.sqlops.getAppPath(appname)
-                    appid   = self.sqlops.getAppId(appname)
+                    appid    = self.sqlops.getAppId(appname)
                     self.sqlops.changeAppStatus(appid,0)
                     filestr = FileHash()
                     print(pathname)
@@ -124,18 +133,10 @@ class MainWindow(wx.Frame):
                 self.reloadListBox()
 
 
-
-
-    # def OnPopupItemSelected(self,e):
-    #
-    #     print("hello")
-
-
     def reloadListBox(self):
         self.listbox.DeleteAllItems()
-        sqlops = Sqlops()
-        result = sqlops.sqlAppSelect()
-        apps = result.fetchall()
+        result = self.sqlops.sqlAppSelectAll()
+        apps   = result.fetchall()
         for app in apps:
             index = self.listbox.InsertItem(0, app[1])
             status = self.getStatus(app[4])
@@ -151,72 +152,44 @@ class MainWindow(wx.Frame):
             return "Excepmted"
 
     def onResetDb(self,e):
-        dialog = wx.MessageDialog(self, message="Reset Database", caption="Confirm Reset Database",
-                                  style=wx.OK | wx.CANCEL | wx.ICON_WARNING)
-        result = dialog.ShowModal()
-        if result == wx.ID_CANCEL:
-            print("cancelled")
-            return
+
+        if not self.messageDialog(message="Reset Database",caption="Confirm Reset Database"):
+            return False
         else:
-            sqlobj = Sqlops()
-            sqlobj.resetDbs()
-            dialog = wx.MessageDialog(self, message="Success", caption="Successfully Reset Database",
-                                      style=wx.OK |wx.ICON_INFORMATION)
-            dialog.ShowModal()
+            self.sqlops.resetDbs()
             self.listbox.DeleteAllItems()
+            self.messageDialog(message="Success", caption="Successfully Reset Database")
 
 
     def onScan(self,e):
 
-        fs = FileScan()
-        result = fs.scan()
+        result = self.filescan.scan()
 
         if  not result:
-            dialog = wx.MessageDialog(self, message="No Application to scan " ,
-                                      caption="Error",
-                                      style=wx.OK | wx.ICON_ERROR)
-            dialog.ShowModal()
+            self.messageDialog(message="No Application to scan",caption="Error")
             return  False
 
-
-
-        
         if result != 1:
-            sql = Sqlops()
             appid = result[5]
-            appname = sql.getAppName(result[5])
-            dialog = wx.MessageDialog(self, message="This file Changed Location "+result[2]+"Appname =="+appname, caption="File Changed",
-                                      style=wx.OK | wx.ICON_ERROR)
-            dialog.ShowModal()
+            appname = self.sqlops.getAppName(result[5])
 
-            dialog = wx.MessageDialog(self, message="Stop Application "+appname, caption="Confirm Stop",
-                                      style=wx.OK | wx.CANCEL | wx.ICON_WARNING)                                               
-            result = dialog.ShowModal()
-            if result == wx.ID_CANCEL:
+            self.messageDialog(message="This file Changed Location "+result[2]+"Appname =="+appname,caption="File Changed")
+
+            if not self.messageDialog(message="Stop Application "+appname, caption="Confirm Stop"):
                 print("caneled")
+                return False
             else:
-                ps = Processhandle()
-                result = ps.stopapp(appname)
+
+                result = self.ps.stopapp(appname)
                 if result == 1:
-                    sql.changeAppStatus(appid)
+                    self.sqlops.changeAppStatus(appid,status=1)
                     self.reloadListBox()
-                    print("success")
                 else:
-                    print("error")
+                    self.messageDialog(message="Unable to stop Application it is not running currently" ,caption="Unable to stop")
 
-            print(result)
         else:
-            dialog = wx.MessageDialog(self, message="No file Changed",
-                                      caption=" No Intrusion",
-                                      style=wx.OK | wx.ICON_ERROR)
-            dialog.ShowModal()
+            self.messageDialog(message="No file Changed",caption=" No Intrusion")
 
-
-
-
-
-
-        
     def onFileopen(self,e):
         with wx.DirDialog (None, "Choose App Folder", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
@@ -224,28 +197,20 @@ class MainWindow(wx.Frame):
                  return     # the user changed their mind
                     # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
-            print(pathname)
-            sqlops = Sqlops()
-            if sqlops.checkAppExists(pathname):
-                print("duplicate")
-                dialog = wx.MessageDialog(self, message="Error", caption="Application Already exists",
-                                          style=wx.OK | wx.ICON_ERROR)
-                dialog.ShowModal()
-                return
+            if self.sqlops.checkAppExists(pathname):
+                self.messageDialog(message="Error", caption="Application Already exists")
+                return False
 
-            filestr = FileHash()
 
             appname = os.path.basename(pathname)
             index = self.listbox.InsertItem(0, appname)
             status = self.getStatus(0)
             self.listbox.SetItem(index, 1, status)
-            appid = sqlops.setAppData(path=pathname)
-            filestr.checkfoldersave(pathname,calltype='save',appid=appid)
+            appid = self.sqlops.setAppData(path=pathname)
+            self.filehash.checkfoldersave(pathname,calltype='save',appid=appid)
             # wx.Gauge(pnl,)
 
-            dialog = wx.MessageDialog(self, message="Success", caption="Successfully Added Application",
-                                      style=wx.OK | wx.ICON_INFORMATION)
-            dialog.ShowModal()
+            self.messageDialog(message="Success", caption="Successfully Added Application")
 
 
             
