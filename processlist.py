@@ -22,8 +22,9 @@ class Processhandle:
             try:
                 pinfo = proc.as_dict(attrs=['pid', 'name', 'username'])
             except NoSuchProcess:
-                print("exception")
-            print(pinfo)
+                pass
+                # print("exception")
+            # print(pinfo)
 
 
 if __name__ == "__main__":

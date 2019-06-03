@@ -118,7 +118,7 @@ class MainWindow(wx.Frame):
         else:
             count = self.listbox.SelectedItemCount
             if count == 0:
-                print("Select an App")
+                self.messageDialog(message="Select an App", caption="Error")
             else:
                 apps = self.listbox.GetFirstSelected()
                 while (apps != -1):
@@ -127,7 +127,6 @@ class MainWindow(wx.Frame):
                     appid    = self.sqlops.getAppId(appname)
                     self.sqlops.changeAppStatus(appid,0)
                     filestr = FileHash()
-                    print(pathname)
                     filestr.checkfoldersave(pathname,calltype='save',appid=appid)
                     apps = self.listbox.GetNextSelected(apps)
                 self.reloadListBox()
@@ -176,7 +175,7 @@ class MainWindow(wx.Frame):
             self.messageDialog(message="This file Changed Location "+result[2]+"Appname =="+appname,caption="File Changed")
 
             if not self.messageDialog(message="Stop Application "+appname, caption="Confirm Stop"):
-                print("caneled")
+                # print("caneled")
                 return False
             else:
 
@@ -190,10 +189,38 @@ class MainWindow(wx.Frame):
         else:
             self.messageDialog(message="No file Changed",caption=" No Intrusion")
 
+    def onStartUpScan(self,result):
+
+        if not result:
+            self.messageDialog(message="No Application to scan", caption="Error")
+            return False
+        if result != 1:
+            appid = result[5]
+            appname = self.sqlops.getAppName(result[5])
+
+            self.messageDialog(message="This file Changed Location " + result[2] + "Appname ==" + appname,
+                               caption="File Changed")
+
+            if not self.messageDialog(message="Stop Application " + appname, caption="Confirm Stop"):
+                # print("caneled")
+                return False
+            else:
+
+                result = self.ps.stopapp(appname)
+                if result == 1:
+                    self.sqlops.changeAppStatus(appid, status=1)
+                    self.reloadListBox()
+                else:
+                    self.messageDialog(message="Unable to stop Application it is not running currently",
+                                       caption="Unable to stop")
+
+        else:
+            self.messageDialog(message="No file Changed", caption=" No Intrusion")
+
     def onFileopen(self,e):
         with wx.DirDialog (None, "Choose App Folder", "",wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as fileDialog:
             if fileDialog.ShowModal() == wx.ID_CANCEL:
-                 print("cancelled")
+                 # print("cancelled")
                  return     # the user changed their mind
                     # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
@@ -213,9 +240,9 @@ class MainWindow(wx.Frame):
             self.messageDialog(message="Success", caption="Successfully Added Application")
 
 
-            
-app = wx.App(False)
-frame = MainWindow(None, 'Intrusion Detection System')
-app.MainLoop()
+if __name__ == "__main__":
+    app = wx.App(False)
+    frame = MainWindow(None, 'Intrusion Detection System')
+    app.MainLoop()
 
 

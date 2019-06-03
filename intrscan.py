@@ -20,7 +20,7 @@ class FileScan():
             return False
         filerror = 0
         filepath = ""
-        print(applist)
+        # print(applist)
         for apps in applist:
             file = FileHash()
             path = apps[2]
@@ -41,10 +41,10 @@ class FileScan():
                         if(rows[4] == x):
                             pass
                         else:
-                            print(rows[2])
+                            # print(rows[2])
                             filerror = 1
                             filepath = rows
-                            print(filepath)
+                            # print(filepath)
                             return filepath
             else:
                 return 1
@@ -54,7 +54,7 @@ class FileScan():
 
 fs = FileScan()
 fs.scan()
-print(FileScan.infectedApps)
+# print(FileScan.infectedApps)
 
 
 

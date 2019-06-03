@@ -41,7 +41,6 @@ class Sqlops:
         kwargs['time'] = str(time.time())
         kwargs['appname'] = os.path.basename(kwargs['path'])
         sql = "INSERT INTO application (name,path,time) VALUES ('" +kwargs['appname']+ "','" +kwargs['path'] + "','" +kwargs['time'] + "')"
-        print(sql)
         # execute sql
         self.sqlCursor.execute(sql)
         # save values ro db
@@ -52,7 +51,6 @@ class Sqlops:
     def checkAppExists(self,path):
         result = ()
         sql = "SELECT COUNT(*) as count  FROM application WHERE path='"+path+"'"
-        print(sql)
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         if result[0] > 0:
@@ -76,7 +74,7 @@ class Sqlops:
         self.sqlCursor.execute(sql)
         self.conn.commit()
         self.createDbs()
-        print("reset dbs")
+
 
 
 
@@ -103,12 +101,10 @@ class Sqlops:
 
         # insert query
         sql = "INSERT INTO signature (filename,filepath,filetime,signature,appid) VALUES ('"+self.filename+"','"+self.filepath+"','"+self.filetime+"','"+self.sign+"',"+str(self.appid)+")"
-        print(sql)
         #execute sql
         self.sqlCursor.execute(sql)
         #save values ro db
         self.conn.commit()
-        print("insert")
 
     def sqlsignSelect(self,appid):
         sql = "SELECT * FROM signature where appid="+str(appid);
@@ -118,7 +114,7 @@ class Sqlops:
 
     def sqlAppSelect(self):
         sql = "SELECT * FROM application where status = 0";
-        print(sql)
+
         result = self.sqlCursor.execute(sql)
         return result
 
@@ -126,34 +122,29 @@ class Sqlops:
 
     def sqlAppSelectAll(self):
         sql = "SELECT * FROM application ";
-        print(sql)
         result = self.sqlCursor.execute(sql)
         return result
 
     def getAppName(self,appid):
         sql = "SELECT name FROM application where id="+str(appid);
-        print(sql)
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
 
     def getAppId(self, appname):
         sql = "SELECT id FROM application where name='"+appname+"'";
-        print(sql)
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
 
     def getAppPath(self, appname):
         sql = "SELECT path FROM application where name='" + appname + "'";
-        print(sql)
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
 
     def getAppStatus(self, appname):
         sql = "SELECT status FROM application where name='" + appname + "'";
-        print(sql)
         result = self.sqlCursor.execute(sql)
         result = result.fetchone()
         return result[0]
